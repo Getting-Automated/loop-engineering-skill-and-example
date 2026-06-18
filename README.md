@@ -116,6 +116,27 @@ The **verifier is the gate** — it's what lets the loop run without you, and wh
 
 ---
 
+## 🧾 Receipts — we ran it on a real production library
+
+This isn't a thought experiment. We pointed `/pre-loop` at the **real Getting Automated content library** — 69 published guides, videos, and workflows — and let the loop it designed run on a branch. Genuine before/after:
+
+| | Errors | Verdict |
+|---|---|---|
+| **Before** | **20** | ❌ FAIL |
+| **After** | **0** | ✅ PASS |
+
+What the loop actually did:
+
+- **Fixed 14 structural issues** — `relatedContent` stored as a bare string, 8 videos missing an `id`, a workflow missing its `---` frontmatter fence — frontmatter only, **every body byte-identical** to the original.
+- **Caught a bug in its own verifier** during the pre-flight (6 false positives) and fixed the *validator*, not the content.
+- **Refused to invent the 67 facts it was missing** (publish dates, tags, categories, thumbnails) — flagged every one for human review instead of hallucinating to go green.
+
+That last point is the whole game: a lazy "make it pass" loop fakes the data; this one stopped cold at the line between *structure* (safe to fix) and *facts* (a human's call).
+
+**→ The full run — the wizard session, the contract, the real diff, and the actual validator it built: [`example/content-library-loop/`](example/content-library-loop/run-result.md)**
+
+---
+
 ## ⚡ Quickstart
 
 **The easiest install is no install at all.** Clone the repo and open your agent inside it — the skill auto-loads as a project skill (it lives in `.claude/skills/` and `.agents/skills/`, which Claude Code and Codex both scan automatically):
@@ -182,6 +203,7 @@ It scales to the task — a one-file fix fills three sections; a new subsystem f
 
 - 📄 **[`loop-brief-template.md`](loop-brief-template.md)** — the blank contract (intent · scope · architecture · plan · verifier stack + anti-goals · safety · health).
 - 🏗️ **[`loop-brief-example.md`](loop-brief-example.md)** — the template **filled in** for a real, non-trivial task (adding rate limiting to a public API), so you can see the depth.
+- 🎬 **[`example/content-library-loop/`](example/content-library-loop/README.md)** — a **real `/pre-loop` run**, start to finish: the wizard session + the brief it wrote for a content-QA loop, grounded in an actual business-context repo.
 
 ## 🚦 When *not* to loop
 
