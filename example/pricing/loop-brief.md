@@ -8,7 +8,8 @@ The eight inputs a reliable loop needs, filled in for this demo. This is what th
 | **Task** | Make the failing tests in this folder pass |
 | **Source of truth** | `test_pricing.py` (the asserted behavior) + the docstrings in `pricing.py` |
 | **Done means** | `pytest -q` exits 0 — all tests green |
-| **Verifier** | `pytest -q` |
+| **Verifier** | `pytest -q` (exits 0) |
+| **Guard (anti-gaming)** | Fix the bugs in `pricing.py`; do **not** edit `test_pricing.py` — passing by changing the check doesn't count |
 | **State** | The working tree (`pricing.py` edits) — no external state |
 | **Stop when** | Success: `pytest` exits 0. Abort: 6 turns with no fewer failures. |
 | **Human review** | None — local code + tests, fully reversible, no side effects |
@@ -17,7 +18,7 @@ The eight inputs a reliable loop needs, filled in for this demo. This is what th
 ## The command  (Claude Code or Codex Goal mode — same line)
 
 ```
-/goal "every test in this folder passes: run pytest -q and it exits 0"
+/goal "every test passes — pytest -q exits 0 — by fixing the bugs in pricing.py, not by editing test_pricing.py"
 ```
 
 Why this works: the **definition of done is machine-checkable** (`pytest` exit

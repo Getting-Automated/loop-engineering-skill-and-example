@@ -5,7 +5,7 @@ then point a goal loop at it:
 
     pytest -q                                                    # 3 failed
     claude
-    /goal "every test in this folder passes: run pytest -q and it exits 0"
+    /goal "every test passes — pytest -q exits 0 — by fixing the bugs in pricing.py, not by editing test_pricing.py"
 
 The agent reads the failing tests, fixes the functions below, re-runs pytest,
 and stops when the suite is green. That is the whole loop: action -> verifier

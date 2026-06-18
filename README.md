@@ -118,20 +118,25 @@ The **verifier is the gate** — it's what lets the loop run without you, and wh
 
 ## ⚡ Quickstart
 
-**Install the skill** (same `SKILL.md` format for both tools — only the folder differs):
-
-| Tool | Install globally | Invoke |
-|------|------------------|--------|
-| **Claude Code** | `cp -r .claude/skills/pre-loop ~/.claude/skills/` | `/pre-loop` |
-| **Codex** | `cp -r .agents/skills/pre-loop ~/.agents/skills/` | `/skills` → pre-loop, or `$pre-loop` |
-
-…or just open this repo in either tool and it's available as a project skill.
-
-**Run the 60-second demo:**
+**The easiest install is no install at all.** Clone the repo and open your agent inside it — the skill auto-loads as a project skill (it lives in `.claude/skills/` and `.agents/skills/`, which Claude Code and Codex both scan automatically):
 
 ```bash
 git clone https://github.com/Getting-Automated/loop-engineering-skill-and-example
-cd loop-engineering-skill-and-example/example/pricing
+cd loop-engineering-skill-and-example
+claude          # or: codex
+```
+
+Then run **`/pre-loop`** (Claude Code) or **`$pre-loop`** (Codex). No copying, no config.
+
+**Want it available in every project?**
+
+- **Claude Code** — `cp -r .claude/skills/pre-loop ~/.claude/skills/`, then `/pre-loop`
+- **Codex** — from a Codex session, `$skill-installer install https://github.com/Getting-Automated/loop-engineering-skill-and-example/tree/main/.agents/skills/pre-loop` (or `cp -r .agents/skills/pre-loop ~/.agents/skills/`), then `$pre-loop`
+
+**Run the 60-second demo** — in the repo you just cloned:
+
+```bash
+cd example/pricing
 pip install -r requirements.txt
 pytest -q          # 👀 3 failed
 ```
@@ -139,7 +144,7 @@ pytest -q          # 👀 3 failed
 Now hand it to a loop — in **Claude Code** (`claude`) or **Codex** (`codex`), same command:
 
 ```
-/goal "every test in this folder passes: run pytest -q and it exits 0"
+/goal "every test passes — pytest -q exits 0 — by fixing the bugs in pricing.py, not by editing test_pricing.py"
 ```
 
 Watch it read the failing tests, fix `pricing.py`, re-run `pytest`, and **stop on green**. That's the whole thing: **action → verifier → stop.**
@@ -151,6 +156,12 @@ Watch it read the failing tests, fix `pricing.py`, re-run `pytest`, and **stop o
 ```
 
 Self-contained — no git required, so it works live on stream every time.
+
+> **"Couldn't a good model just one-shot this?"** Honestly — probably. Three bugs in one file is small enough that a strong model often fixes it in a single pass. That's the tradeoff of a 90-second demo: a problem genuinely too big to one-shot is also too big to *show* in 90 seconds.
+>
+> The point was never the number of tries — it's the **pattern**. The agent checked its own work against a verifier it couldn't fake and stopped on *proof*, not on "good enough." Even a one-shot run still stops on proof.
+>
+> Now extrapolate. The same loop is what carries a multi-file migration, a flaky-test hunt across a whole suite, a forty-file refactor, or an overnight job you can't babysit — work that one-shotting won't reliably land, or that you wouldn't *want* to one-shot because you need the receipts. The demo is small so you can watch the whole loop run end to end. The value is everything it scales to.
 
 ---
 

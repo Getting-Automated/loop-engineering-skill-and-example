@@ -18,13 +18,13 @@ pytest -q          # 3 failed
 **Claude Code:**
 ```bash
 claude
-/goal "every test in this folder passes: run pytest -q and it exits 0"
+/goal "every test passes — pytest -q exits 0 — by fixing the bugs in pricing.py, not by editing test_pricing.py"
 ```
 
 **Codex** (Goal mode — identical loop):
 ```bash
 codex
-/goal "every test in this folder passes: run pytest -q and it exits 0"
+/goal "every test passes — pytest -q exits 0 — by fixing the bugs in pricing.py, not by editing test_pricing.py"
 ```
 
 The agent reads the failing tests, fixes `pricing.py`, re-runs `pytest`, and
