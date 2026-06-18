@@ -6,6 +6,9 @@
 
 **A `/pre-loop` skill for [Claude Code](https://www.claude.com/product/claude-code) + [Codex](https://developers.openai.com/codex) that turns "keep going until it's done" from a token-burning gamble into an engineered, self-verifying loop — plus a runnable demo you can put on screen in 60 seconds.**
 
+<!-- 📺 When the video is live, replace REPLACE_WITH_VIDEO_ID below — it appears twice on the next line -->
+[![Watch the Loop Engineering video](https://img.youtube.com/vi/REPLACE_WITH_VIDEO_ID/maxresdefault.jpg)](https://youtu.be/REPLACE_WITH_VIDEO_ID "Watch on YouTube")
+
 ![Claude Code](https://img.shields.io/badge/Claude_Code-skill-2563EB?style=flat-square)
 ![Codex](https://img.shields.io/badge/Codex-skill-10A37F?style=flat-square)
 ![Runnable demo](https://img.shields.io/badge/demo-runnable-success?style=flat-square)
@@ -203,3 +206,21 @@ It scales to the task — a one-file fix fills three sections; a new subsystem f
 The leaders building these tools have already made the jump — *"I don't prompt Claude anymore. I write loops, and the loops do the work. My job is to write loops."* The skill in this repo is how you make that practical without the loop drifting, gaming its tests, or running off a cliff: **a loop is only as good as the contract it executes against — so write the contract first.**
 
 Built alongside the **Getting Automated** *Loop Engineering* explainer on YouTube. If this saved you a few burned token-hours, ⭐ the repo.
+
+---
+
+## 🔗 More From Getting Automated
+
+- **Website** — [gettingautomated.com](https://gettingautomated.com)
+- **YouTube** — [@hunterasneed](https://www.youtube.com/@hunterasneed)
+- **Free automation tools** — [tools.gettingautomated.com](https://tools.gettingautomated.com)
+
+### Need this built for you?
+
+If you want loops wired into your real workflow — client delivery, content operations, internal automation — grab a slot and we'll scope it:
+
+**[→ Schedule a 30-Minute Connect](https://calendly.com/workflowsy/30-minute-connect)**
+
+## 📄 License
+
+MIT — see [LICENSE](LICENSE). Use it, fork it, ship it.
