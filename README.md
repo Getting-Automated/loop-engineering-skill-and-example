@@ -1,73 +1,205 @@
-# Loop Engineering — skill + runnable example
+<div align="center">
 
-Companion repo to the Getting Automated **Loop Engineering** explainer. It ships
-two things you can actually run:
+# 🔁 Loop Engineering
 
-## 1. The `pre-loop` skill — for **Claude Code AND Codex**
+### Stop prompting. Start looping.
 
-Run it **before** a loop (`/goal`, `/loop`, Codex Goal, or an Automation). It does
-the thinking that makes a loop produce work that *fits your system* instead of
-drifting into something you have to rip out:
+**A `/pre-loop` skill for [Claude Code](https://www.claude.com/product/claude-code) + [Codex](https://developers.openai.com/codex) that turns "keep going until it's done" from a token-burning gamble into an engineered, self-verifying loop — plus a runnable demo you can put on screen in 60 seconds.**
 
-- **Runs as an interactive wizard** — reads your repo first (`CLAUDE.md`/`AGENTS.md`,
-  README, architecture docs, manifests, lint/test/CI config, nearby code), then asks
-  only for the gaps — via Claude Code's question UI, or concise prompts in Codex.
-- **Solidifies the architecture foundations** — where the work fits, patterns to
-  follow, interfaces/contracts, constraints, anti-patterns, ownership/escalation,
-  and the downstream surface it must not break. Offers to write a durable
-  `CLAUDE.md`/`AGENTS.md` if you lack one.
-- **Builds and guards the verifier** — assembles the full **verifier stack**
-  (tests · types · lint · build · review), **scaffolds one if it's missing**
-  (writes the failing acceptance test), names how an agent could **game** it and
-  adds guards, and **pre-flights** it (runs it once to confirm it actually works).
-- **Sets up safe, observable execution** — an isolated **branch/worktree** + rollback,
-  a budget estimate, stop/abort conditions, and a **decision log + stuck-detector**.
-- **Writes the full contract** (`loop-brief.md`) + the **kickoff seed** (the `/goal`
-  + first instruction + golden examples), and tells you plainly **when not to loop**.
+![Claude Code](https://img.shields.io/badge/Claude_Code-skill-2563EB?style=flat-square)
+![Codex](https://img.shields.io/badge/Codex-skill-10A37F?style=flat-square)
+![Runnable demo](https://img.shields.io/badge/demo-runnable-success?style=flat-square)
+![No dependencies](https://img.shields.io/badge/setup-copy_one_folder-lightgrey?style=flat-square)
 
-Full contract structure: [`loop-brief-template.md`](loop-brief-template.md) — and a
-filled, non-trivial example: [`loop-brief-example.md`](loop-brief-example.md).
+</div>
 
-Claude Code and Codex use the **same skill format** (`SKILL.md` with `name` +
-`description` frontmatter) — only the install directory and the command it emits
-differ. This repo ships one for each:
+---
 
-| Tool | Skill file | Install (global) | Invoke |
-|------|-----------|------------------|--------|
-| **Claude Code** | [`.claude/skills/pre-loop/`](.claude/skills/pre-loop/SKILL.md) | `cp -r .claude/skills/pre-loop ~/.claude/skills/` | `/pre-loop` |
-| **Codex** | [`.agents/skills/pre-loop/`](.agents/skills/pre-loop/SKILL.md) | `cp -r .agents/skills/pre-loop ~/.agents/skills/` | `/skills` → pre-loop, or `$pre-loop` |
+## Right now, *you* are the loop
 
-…or just open this repo in the tool and it's available as a project skill.
-The Claude Code version emits `/loop` · `/goal` · Routines; the Codex version emits
-`/goal` (Goal mode) · Automations. The `loop-brief.md` it writes is identical and
-works either way.
+This is how most people run an AI coding agent: prompt it, read the output, spot what's wrong, correct it, run it again. You're the trigger, the memory, **and** the verifier — spending your attention on a job the machine can do itself.
 
-## 2. Goal-loop demo → [`example/pricing/`](example/pricing/README.md)
-
-A tiny project with three failing tests, so you can run a real loop on screen:
-
-```bash
-cd example/pricing
-pip install -r requirements.txt
-pytest -q          # 3 failed
+```mermaid
+flowchart LR
+    subgraph BEFORE["❌ You are the loop"]
+        direction TB
+        Y["🧑 You"] -->|prompt| A["🤖 Agent acts"]
+        A -->|"output to eyeball"| Y
+    end
+    subgraph AFTER["✅ The loop runs itself"]
+        direction TB
+        G["🎯 Goal + contract"] --> A2["🤖 Agent acts"]
+        A2 --> V{"verifier:<br/>passes?"}
+        V -->|no, retry| A2
+        V -->|yes| S["✅ stop"]
+    end
+    BEFORE -.->|"loop engineering"| AFTER
 ```
 
-Then run the loop in **Claude Code** (`claude`) or **Codex** (`codex`) — same command:
+**Loop engineering** is handing that loop to the machine: give it a goal, a way to check its own work, and a place to stop. Done right, you go from babysitting one agent to designing loops that run themselves. But there's a catch nobody warns you about. 👇
+
+## Why most loops fail
+
+A loop is only as good as the **contract** you give it. Point an agent at *"keep going until the tests pass"* with no real contract, and you hit the four classic failure modes:
+
+| | Failure mode | What it looks like |
+|---|---|---|
+| 🕳️ | **No real verifier** | "Done" can't be checked, so the agent stops on *vibes* — confident, wrong output. |
+| 🎭 | **Gamed verifier** | It deletes the failing test or hard-codes the answer. The check goes green; the work isn't done. |
+| 🌀 | **Drift** | No scope, no architecture — it "helpfully" rewrites half your app and breaks three other things. |
+| 🔥 | **No brakes** | No budget, no stop condition, no isolation — it runs forever, or wrecks your working tree. |
+
+> A **gamed verifier is worse than no verifier** — it hands you false confidence at scale.
+
+The fix isn't a better prompt. It's a better **contract**. That's what this repo builds for you.
+
+## What's in the box
+
+Two things you can run today:
+
+| | | |
+|---|---|---|
+| **1** | 🧠 **The `/pre-loop` skill** | Designs the loop *before* you run it — reads your repo, locks in the architecture, builds and guards a real verifier, sets the guardrails, and hands you a ready-to-run `/goal`. Works in **Claude Code and Codex**. |
+| **2** | 🎬 **A 60-second demo** | A tiny project with 3 failing tests, so you can watch a loop fix real bugs and **stop on its own** — with a one-command reset between takes. |
+
+---
+
+## 🧠 How `/pre-loop` works
+
+Instead of writing a giant prompt from memory, you type `/pre-loop` and it runs as an interactive wizard:
+
+```mermaid
+flowchart TD
+    Start(["You: 'loop this'"]) --> Read["📖 Read the repo<br/>stack · conventions · build &amp; test commands"]
+    Read --> Arch["🏛️ Lock in the architecture<br/>where it fits · patterns · interfaces · constraints"]
+    Arch --> Ver["🎯 Build + guard the verifier"]
+    Ver --> V1["✍️ scaffold one<br/>if it's missing"]
+    Ver --> V2["🛡️ anti-gaming<br/>guards"]
+    Ver --> V3["🚀 pre-flight:<br/>run it once"]
+    V1 --> Guard
+    V2 --> Guard
+    V3 --> Guard["🧰 Guardrails<br/>branch · budget · stop · rollback"]
+    Guard --> Fit{"Good fit<br/>to loop?"}
+    Fit -->|no| No["🚫 Here's exactly why —<br/>fix this first"]
+    Fit -->|yes| Brief["📝 loop-brief.md<br/>+ a ready-to-run /goal"]
+    Brief --> Run([▶️ Run the loop])
+```
+
+What that gives the loop that a raw prompt never does:
+
+- **📖 Full context, inferred** — it reads `CLAUDE.md`/`AGENTS.md`, the README, manifests, lint/test/CI config and nearby code *before* asking you anything. (Claude Code asks the gaps through its question UI; Codex asks in the terminal.)
+- **🏛️ Architecture that fits** — where the work lives, the patterns to mirror, the interfaces it can't break, the things to avoid. No durable context file? It offers to write one.
+- **🎯 A verifier you can trust** — the full **verifier stack** (tests · types · lint · build · review), *scaffolded if it doesn't exist*, with **anti-gaming guards**, and **pre-flighted** (run once to prove it actually works).
+- **🧰 Brakes and a seatbelt** — an isolated branch/worktree, a rollback, a budget, stop/abort conditions, and a stuck-detector.
+- **🚫 The honesty to say "don't"** — if it isn't a good fit, it tells you why and what to fix first.
+
+## 🔁 The loop it designs
+
+The output is an **operable loop**: verified, self-correcting progress with a guaranteed stop.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Context: trigger (the goal)
+    Context --> Action: read the brief + state
+    Action --> Verify: run the verifier stack
+    Verify --> Done: ✅ passes
+    Verify --> Action: ❌ not yet — retry
+    Verify --> Abort: 🛑 budget / no progress
+    Done --> [*]: ship + evidence
+    Abort --> [*]: surface the blocker
+```
+
+The **verifier is the gate** — it's what lets the loop run without you, and what gets you out of the chair.
+
+---
+
+## ⚡ Quickstart
+
+**Install the skill** (same `SKILL.md` format for both tools — only the folder differs):
+
+| Tool | Install globally | Invoke |
+|------|------------------|--------|
+| **Claude Code** | `cp -r .claude/skills/pre-loop ~/.claude/skills/` | `/pre-loop` |
+| **Codex** | `cp -r .agents/skills/pre-loop ~/.agents/skills/` | `/skills` → pre-loop, or `$pre-loop` |
+
+…or just open this repo in either tool and it's available as a project skill.
+
+**Run the 60-second demo:**
+
+```bash
+git clone https://github.com/Getting-Automated/loop-engineering-skill-and-example
+cd loop-engineering-skill-and-example/example/pricing
+pip install -r requirements.txt
+pytest -q          # 👀 3 failed
+```
+
+Now hand it to a loop — in **Claude Code** (`claude`) or **Codex** (`codex`), same command:
 
 ```
 /goal "every test in this folder passes: run pytest -q and it exits 0"
 ```
 
-The agent reads the failing tests, fixes the code, re-runs `pytest`, and stops
-when the suite is green — **action → verifier → stop.**
+Watch it read the failing tests, fix `pricing.py`, re-run `pytest`, and **stop on green**. That's the whole thing: **action → verifier → stop.**
 
-Reset between takes with **`example/pricing/reset.sh`** — it restores the bugs,
-clears caches, and confirms 3 failures (self-contained, no git required).
+**Reset between takes:**
+
+```bash
+./reset.sh          # restores the bugs, clears caches, confirms 3 failed
+```
+
+Self-contained — no git required, so it works live on stream every time.
 
 ---
 
-## The idea in one line
+## 📝 The contract it writes
 
-A loop is only as good as the contract it executes against. The `pre-loop` skill
-writes that contract; the example shows the loop honoring it. Generation is easy
-— **verified, self-correcting progress is the whole point.**
+Every loop runs against a `loop-brief.md` — the contract the agent executes against *and* the verifier checks against. That single artifact is the leverage point:
+
+```mermaid
+flowchart LR
+    Brief["📝 loop-brief.md<br/>(the contract)"]
+    Brief -->|"what to build,<br/>how it must fit"| Loop["🔁 The loop<br/>executes it"]
+    Brief -->|"what 'done' and<br/>'good' mean"| Ver["🎯 The verifier<br/>checks against it"]
+    Loop --> Ver
+    Ver -->|proof| Ship["📦 Done + evidence"]
+```
+
+It scales to the task — a one-file fix fills three sections; a new subsystem fills them all:
+
+- 📄 **[`loop-brief-template.md`](loop-brief-template.md)** — the blank contract (intent · scope · architecture · plan · verifier stack + anti-goals · safety · health).
+- 🏗️ **[`loop-brief-example.md`](loop-brief-example.md)** — the template **filled in** for a real, non-trivial task (adding rate limiting to a public API), so you can see the depth.
+
+## 🚦 When *not* to loop
+
+`/pre-loop` will stop you — on purpose — when a loop is the wrong tool:
+
+- ❌ There's **no real verifier** and one can't be built — you'd just get confident wrong answers.
+- ❌ The agent would have to **guess the facts** (no source of truth).
+- ❌ It's a **deterministic rule** — write code, not a loop.
+- ❌ **Irreversible side effects** (money, prod, deletes, outbound messages) with no approval gate.
+- ❌ **Nobody will review the output** — a loop that piles up unreviewed work just creates review debt.
+
+## 🗂️ Repo layout
+
+```
+.
+├── .claude/skills/pre-loop/SKILL.md   # the skill, for Claude Code
+├── .agents/skills/pre-loop/SKILL.md   # the skill, for Codex
+├── loop-brief-template.md             # the blank contract
+├── loop-brief-example.md              # a filled, non-trivial contract
+└── example/pricing/                   # the runnable demo
+    ├── pricing.py                     #   3 intentional bugs
+    ├── test_pricing.py                #   the verifier (source of truth)
+    ├── loop-brief.md                  #   the contract for this demo
+    └── reset.sh                       #   restore the bugs between takes
+```
+
+---
+
+## Why this exists
+
+> **Generation is easy. Verified, self-correcting progress is the whole point.**
+
+The leaders building these tools have already made the jump — *"I don't prompt Claude anymore. I write loops, and the loops do the work. My job is to write loops."* The skill in this repo is how you make that practical without the loop drifting, gaming its tests, or running off a cliff: **a loop is only as good as the contract it executes against — so write the contract first.**
+
+Built alongside the **Getting Automated** *Loop Engineering* explainer on YouTube. If this saved you a few burned token-hours, ⭐ the repo.
