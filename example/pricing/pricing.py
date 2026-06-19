@@ -19,8 +19,7 @@ def apply_discount(price: float, percent: float) -> float:
 
     apply_discount(100, 20) -> 80.0
     """
-    # BUG: treats ``percent`` as a fraction, not a percentage (missing / 100).
-    return price * (1 - percent)
+    return price * (1 - percent / 100)
 
 
 def add_tax(price: float, rate: float) -> float:
@@ -28,8 +27,7 @@ def add_tax(price: float, rate: float) -> float:
 
     add_tax(100, 0.1) -> 110.0
     """
-    # BUG: adds the rate instead of scaling the price by it.
-    return price + rate
+    return price * (1 + rate)
 
 
 def cart_total(items: list[dict]) -> float:
@@ -37,5 +35,4 @@ def cart_total(items: list[dict]) -> float:
 
     cart_total([{"price": 10.0, "qty": 2}, {"price": 5.0, "qty": 3}]) -> 35.0
     """
-    # BUG: ignores quantity.
-    return sum(item["price"] for item in items)
+    return sum(item["price"] * item["qty"] for item in items)
