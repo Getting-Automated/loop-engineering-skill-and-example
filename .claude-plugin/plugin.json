@@ -1,0 +1,13 @@
+{
+  "name": "pre-loop",
+  "description": "Design a reliable agent loop before you run it — reads your repo, builds a verifier it can't game, and writes the loop's contract. For Claude Code and Codex.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Getting Automated",
+    "url": "https://gettingautomated.com"
+  },
+  "homepage": "https://github.com/Getting-Automated/loop-engineering-skill-and-example",
+  "license": "MIT",
+  "keywords": ["loop-engineering", "claude-code", "codex", "verification", "agents"],
+  "skills": "./.claude/skills"
+}
