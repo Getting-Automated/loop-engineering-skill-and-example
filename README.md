@@ -6,8 +6,7 @@
 
 **A `/pre-loop` skill for [Claude Code](https://www.claude.com/product/claude-code) + [Codex](https://developers.openai.com/codex) that turns "keep going until it's done" from a token-burning gamble into an engineered, self-verifying loop — plus a runnable demo you can put on screen in 60 seconds.**
 
-<!-- 📺 When the video is live, replace REPLACE_WITH_VIDEO_ID below — it appears twice on the next line -->
-[![Watch the Loop Engineering video](https://img.youtube.com/vi/REPLACE_WITH_VIDEO_ID/maxresdefault.jpg)](https://youtu.be/REPLACE_WITH_VIDEO_ID "Watch on YouTube")
+[![Watch the Loop Engineering video](https://img.youtube.com/vi/xBygL_fIK78/maxresdefault.jpg)](https://youtu.be/xBygL_fIK78 "Watch on YouTube")
 
 ![Claude Code](https://img.shields.io/badge/Claude_Code-skill-2563EB?style=flat-square)
 ![Codex](https://img.shields.io/badge/Codex-skill-10A37F?style=flat-square)
